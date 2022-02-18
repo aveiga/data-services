@@ -4,7 +4,8 @@ metadata:
   name: loki
   namespace: kube-system
 spec:
-  chart: grafana/loki-stack
+  repo: https://grafana.github.io/helm-charts
+  chart: loki-stack
   targetNamespace: loki
   valuesContent: |-
     grafana:
