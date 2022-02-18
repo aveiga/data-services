@@ -2,6 +2,7 @@ apiVersion: helm.cattle.io/v1
 kind: HelmChart
 metadata:
   name: loki
+  namespace: kube-system
 spec:
   chart: grafana/loki-stack
   targetNamespace: loki
