@@ -30,11 +30,11 @@ metadata:
 spec:
   rules:
     - host: grafana.av-wsk8s
-  http:
-    paths:
-      - path: /
-        backend:
-          service:
-            name: loki-grafana
-            port:
-              number: 80
+      http:
+        paths:
+          - path: /
+            backend:
+              service:
+                name: loki-grafana
+                port:
+                  number: 80
