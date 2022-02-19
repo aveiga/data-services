@@ -32,7 +32,8 @@ spec:
     - host: grafana.av-wsk8s
       http:
         paths:
-          - path: /
+          - pathType: Prefix
+            path: /
             backend:
               service:
                 name: loki-grafana
