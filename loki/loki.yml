@@ -19,23 +19,3 @@ spec:
       server:
         persistentVolume:
           enabled: false
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: loki-grafana
-  namespace: loki
-  # annotations:
-  #   nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  rules:
-    - host: grafana.av-wsk8s
-      http:
-        paths:
-          - pathType: Prefix
-            path: /
-            backend:
-              service:
-                name: loki-grafana
-                port:
-                  number: 80
