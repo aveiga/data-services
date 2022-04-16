@@ -1,0 +1,72 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: mongo
+# spec:
+#   selector:
+#     matchLabels:
+#       app: mongo
+#   template:
+#     metadata:
+#       labels:
+#         app: mongo
+#     spec:
+#       containers:
+#         - name: mongo
+#           image: mongo:5.0.3
+#           resources:
+#             limits:
+#               memory: "1Gi"
+#               cpu: "500m"
+#           ports:
+#             - containerPort: 27017
+#           volumeMounts:
+#             - mountPath: "/data/db" #this should be read: where will we mount the volume? It's the right hand part of the docker -v syntax
+#               name: mongo-storage #name of the volume, as specified below
+#           env:
+#             - name: MONGO_LOG_DIR
+#               value: "/dev/null"
+#       volumes:
+#         - name: mongo-storage
+#           persistentVolumeClaim:
+#             claimName: mongo-pvc #name of the previously create pvc
+
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: mongo
+spec:
+  serviceName: "mongo"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        role: mongo
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: mongo
+          image: mongo
+          resources:
+            limits:
+              memory: "2Gi"
+              cpu: "2"
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - mountPath: "/data/db" #this should be read: where will we mount the volume? It's the right hand part of the docker -v syntax
+              name: mongo-storage #name of the volume, as specified below
+          env:
+            - name: MONGO_LOG_DIR
+              value: "/dev/null"
+      volumes:
+        - name: mongo-storage
+          persistentVolumeClaim:
+            claimName: mongo-pvc

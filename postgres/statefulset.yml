@@ -1,0 +1,73 @@
+---
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: postgresql
+spec:
+  serviceName: "postgresql"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: "postgresql"
+  template:
+    metadata:
+      labels:
+        role: postgresql
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: postgresql
+          image: postgres:14.2
+          resources:
+            limits:
+              memory: "2Gi"
+              cpu: "2"
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - mountPath: "/data/db" #this should be read: where will we mount the volume? It's the right hand part of the docker -v syntax
+              name: postgresql-storage #name of the volume, as specified below
+          env:
+            - name: POSTGRES_PASSWORD
+              value: "1234567890"
+      volumes:
+        - name: postgresql-storage
+          persistentVolumeClaim:
+            claimName: postgresql-pvc
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: postgresql
+# spec:
+#   selector:
+#     matchLabels:
+#       app: postgresql
+#   template:
+#     metadata:
+#       labels:
+#         app: postgresql
+#     spec:
+#       containers:
+#         - name: postgresql
+#           image: postgres:14.2
+#           resources:
+#             requests:
+#               memory: "1Gi"
+#               cpu: "500m"
+#           ports:
+#             - containerPort: 5432
+#           volumeMounts:
+#             - mountPath: "/data/db" #this should be read: where will we mount the volume? It's the right hand part of the docker -v syntax
+#               name: postgresql-storage #name of the volume, as specified below
+#           env:
+#             - name: POSTGRES_PASSWORD
+#               value: "1234567890"
+#       volumes:
+#         - name: postgresql-storage
+#           persistentVolumeClaim:
+#             claimName: postgresql-pvc #name of the previously create pvc
+
