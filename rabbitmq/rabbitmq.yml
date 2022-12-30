@@ -1,0 +1,41 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rabbitmq
+  labels:
+    name: rabbitmq
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: rabbitmq
+  namespace: rabbitmq
+spec:
+  repo: https://charts.bitnami.com/bitnami
+  chart: rabbitmq
+  targetNamespace: rabbitmq
+  valuesContent: |-
+    image:
+      repository: rabbitmq
+      tag: 3-management
+    replicaCount: 1
+    extraPlugins: "rabbitmq_stream rabbitmq_stream_management rabbitmq_consistent_hash_exchange"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq-custom
+  namespace: rabbitmq
+spec:
+  type: NodePort
+  ports:
+    - name: management
+      nodePort: 30900
+      port: 15672
+    - name: service
+      nodePort: 30901
+      port: 5672
+  selector:
+    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/name: rabbitmq
